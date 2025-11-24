@@ -57,10 +57,16 @@ function App() {
   const [products, setProducts] = useState(loadProducts);
   const [loading, setLoading] = useState(false);
 
-  // Sort products so that products needing reorder come first
-  const sortedProducts = [...products].sort((a, b) => {
-    return needsReorder(b) - needsReorder(a); // True values (reorder) come first
-  });
+  // Separate products into two groups: those needing reorder (Yes) and those not needing reorder (No)
+  const productsNeedingReorder = products.filter(needsReorder);
+  const productsNotNeedingReorder = products.filter((product) => !needsReorder(product));
+
+  // Sort each group by inventory in ascending order
+  const sortedProductsNeedingReorder = productsNeedingReorder.sort((a, b) => a.inventory - b.inventory);
+  const sortedProductsNotNeedingReorder = productsNotNeedingReorder.sort((a, b) => a.inventory - b.inventory);
+
+  // Combine both groups: products needing reorder come first, followed by those not needing reorder
+  const sortedProducts = [...sortedProductsNeedingReorder, ...sortedProductsNotNeedingReorder];
 
   return (
     <div className="App">
