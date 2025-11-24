@@ -68,12 +68,28 @@ function App() {
   // Combine both groups: products needing reorder come first, followed by those not needing reorder
   const sortedProducts = [...sortedProductsNeedingReorder, ...sortedProductsNotNeedingReorder];
 
+  // Dashboard: Calculate total products and products needing reorder
+  const totalProducts = products.length;
+  const productsToReorder = productsNeedingReorder.length;
+
   return (
     <div className="App">
       <div className="content-wrapper">
         {/* Header inside a card with black background and curved edges */}
         <div className="header-card">
           <h1 className="header">Product Reorder Dashboard</h1>
+        </div>
+
+        {/* Dashboard Stats Cards */}
+        <div className="stats-cards">
+          <div className="stat-card">
+            <h3>Total Products</h3>
+            <p>{totalProducts}</p>
+          </div>
+          <div className="stat-card">
+            <h3>Products to Reorder</h3>
+            <p>{productsToReorder}</p>
+          </div>
         </div>
 
         {loading ? (
