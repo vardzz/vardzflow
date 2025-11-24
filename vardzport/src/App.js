@@ -16,6 +16,27 @@ function App() {
     "Digital Thermometer", "Mini Camera", "Weather Station", "Smart Light Switch", "Digital Picture Frame"
   ];
 
+  // Function to calculate reorder point
+  const calculateReorderPoint = (avgSalesPerWeek, leadTime) => {
+    return avgSalesPerWeek * leadTime;
+  };
+
+  // Function to check if a product needs to be reordered
+  const needsReorder = (product) => {
+    const reorderPoint = calculateReorderPoint(product.average_sales_per_week, product.lead_time);
+    return product.inventory < reorderPoint;
+  };
+
+  // Load product data from localStorage or generate new data
+  const loadProducts = () => {
+    const savedProducts = localStorage.getItem('products');
+    if (savedProducts) {
+      return JSON.parse(savedProducts);
+    } else {
+      return generateMockData();
+    }
+  };
+
   // Generate mock data for 100 products with realistic product names
   const generateMockData = () => {
     let products = [];
@@ -28,22 +49,13 @@ function App() {
         lead_time: Math.floor(Math.random() * 6) + 1, // Random lead time between 1 and 6 weeks
       });
     }
+    // Save the generated data to localStorage
+    localStorage.setItem('products', JSON.stringify(products));
     return products;
   };
 
-  const [products, setProducts] = useState(generateMockData());
+  const [products, setProducts] = useState(loadProducts);
   const [loading, setLoading] = useState(false);
-
-  // Function to calculate reorder point
-  const calculateReorderPoint = (avgSalesPerWeek, leadTime) => {
-    return avgSalesPerWeek * leadTime;
-  };
-
-  // Function to check if a product needs to be reordered
-  const needsReorder = (product) => {
-    const reorderPoint = calculateReorderPoint(product.average_sales_per_week, product.lead_time);
-    return product.inventory < reorderPoint;
-  };
 
   // Sort products so that products needing reorder come first
   const sortedProducts = [...products].sort((a, b) => {
@@ -57,7 +69,7 @@ function App() {
         <div className="header-card">
           <h1 className="header">Product Reorder Dashboard</h1>
         </div>
-        
+
         {loading ? (
           <p>Loading...</p>
         ) : (
